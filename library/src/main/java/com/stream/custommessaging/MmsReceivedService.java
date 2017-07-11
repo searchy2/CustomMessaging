@@ -1,4 +1,4 @@
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 
 import android.app.IntentService;
@@ -27,7 +27,7 @@ import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.RetrieveConf;
 import com.google.android.mms.util_alt.SqliteWrapper;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,10 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static com.google.android.mms.pdu_alt.PduHeaders.STATUS_RETRIEVED;
-import static com.klinker.android.send_message.MmsReceivedReceiver.EXTRA_FILE_PATH;
-import static com.klinker.android.send_message.MmsReceivedReceiver.EXTRA_LOCATION_URL;
-import static com.klinker.android.send_message.MmsReceivedReceiver.EXTRA_TRIGGER_PUSH;
-import static com.klinker.android.send_message.MmsReceivedReceiver.EXTRA_URI;
 
 public class MmsReceivedService extends IntentService {
     private static final String TAG = "MmsReceivedService";
@@ -58,7 +54,7 @@ public class MmsReceivedService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.v(TAG, "MMS has finished downloading, persisting it to the database");
 
-        String path = intent.getStringExtra(EXTRA_FILE_PATH);
+        String path = intent.getStringExtra(MmsReceivedReceiver.EXTRA_FILE_PATH);
         Log.v(TAG, path);
 
         FileInputStream reader = null;
@@ -74,7 +70,7 @@ public class MmsReceivedService extends IntentService {
 
             DownloadRequest.persist(this, response,
                     new MmsConfig.Overridden(new MmsConfig(this), null),
-                    intent.getStringExtra(EXTRA_LOCATION_URL),
+                    intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL),
                     Utils.getDefaultSubscriptionId(), null);
 
             Log.v(TAG, "response saved successfully");
@@ -94,7 +90,7 @@ public class MmsReceivedService extends IntentService {
             }
 
             handleHttpError(this, intent);
-            DownloadManager.finishDownload(intent.getStringExtra(EXTRA_LOCATION_URL));
+            DownloadManager.finishDownload(intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL));
         }
     }
 
@@ -113,13 +109,13 @@ public class MmsReceivedService extends IntentService {
                     LOCATION_SELECTION,
                     new String[]{
                             Integer.toString(PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND),
-                            intent.getStringExtra(EXTRA_LOCATION_URL)
+                            intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL)
                     });
         }
     }
 
     private static NotificationInd getNotificationInd(Context context, Intent intent) throws MmsException {
-        return (NotificationInd) PduPersister.getPduPersister(context).load((Uri) intent.getParcelableExtra(EXTRA_URI));
+        return (NotificationInd) PduPersister.getPduPersister(context).load((Uri) intent.getParcelableExtra(MmsReceivedReceiver.EXTRA_URI));
     }
 
     private static abstract class CommonNotificationTask {
@@ -295,7 +291,7 @@ public class MmsReceivedService extends IntentService {
         try {
             NotificationInd ind = getNotificationInd(context, intent);
             TransactionSettings transactionSettings = new TransactionSettings(context, null);
-            if (intent.getBooleanExtra(EXTRA_TRIGGER_PUSH, false)) {
+            if (intent.getBooleanExtra(MmsReceivedReceiver.EXTRA_TRIGGER_PUSH, false)) {
                 return new NotifyRespTask(context, ind, transactionSettings);
             } else {
                 return new AcknowledgeIndTask(context, ind, transactionSettings, (RetrieveConf) pdu);

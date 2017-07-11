@@ -24,10 +24,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Telephony.Mms;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import com.android.mms.logs.LogTag;
-import com.klinker.android.send_message.Utils;
+import com.stream.custommessaging.Utils;
 
 /**
  * MmsSystemEventReceiver receives the

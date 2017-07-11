@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,7 +42,7 @@ import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.RetrieveConf;
 import com.google.android.mms.util_alt.SqliteWrapper;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;

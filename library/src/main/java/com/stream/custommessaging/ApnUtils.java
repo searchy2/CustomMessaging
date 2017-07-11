@@ -1,4 +1,4 @@
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,15 +10,16 @@ import android.preference.PreferenceManager;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
+import android.util.Log;
 import android.widget.Toast;
-
-import com.klinker.android.logger.Log;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import stream.custommessaging.R;
 
 public class ApnUtils {
 

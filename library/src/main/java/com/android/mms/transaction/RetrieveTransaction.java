@@ -27,7 +27,7 @@ import android.preference.PreferenceManager;
 import android.provider.Telephony.Mms;
 import android.provider.Telephony.Mms.Inbox;
 import android.text.TextUtils;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import com.android.mms.logs.LogTag;
 import com.android.mms.MmsConfig;
@@ -40,7 +40,7 @@ import com.google.android.mms.pdu_alt.PduHeaders;
 import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.RetrieveConf;
-import com.klinker.android.send_message.Utils;
+import com.stream.custommessaging.Utils;
 
 /**
  * The RetrieveTransaction is responsible for retrieving multimedia
@@ -157,7 +157,7 @@ public class RetrieveTransaction extends Transaction implements Runnable {
                     boolean group;
 
                     try {
-                        group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                        group = com.stream.custommessaging.Transaction.settings.getGroup();
                     } catch (Exception e) {
                         group = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("group_message", true);
                     }

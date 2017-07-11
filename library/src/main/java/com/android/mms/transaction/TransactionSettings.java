@@ -20,11 +20,11 @@ import android.content.Context;
 import android.net.NetworkUtilsHelper;
 import android.provider.Telephony;
 import android.text.TextUtils;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import com.android.mms.MmsConfig;
-import com.klinker.android.send_message.Transaction;
-import com.klinker.android.send_message.Utils;
+import com.stream.custommessaging.Transaction;
+import com.stream.custommessaging.Utils;
 
 import com.android.mms.logs.LogTag;
 

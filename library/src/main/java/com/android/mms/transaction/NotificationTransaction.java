@@ -40,8 +40,8 @@ import com.google.android.mms.pdu_alt.PduComposer;
 import com.google.android.mms.pdu_alt.PduHeaders;
 import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
-import com.klinker.android.logger.Log;
-import com.klinker.android.send_message.BroadcastUtils;
+import android.util.Log;
+import com.stream.custommessaging.BroadcastUtils;
 
 import java.io.IOException;
 
@@ -114,7 +114,7 @@ public class NotificationTransaction extends Transaction implements Runnable {
             boolean group;
 
             try {
-                group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                group = com.stream.custommessaging.Transaction.settings.getGroup();
             } catch (Exception e) {
                 group = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("group_message", true);
             }
@@ -194,7 +194,7 @@ public class NotificationTransaction extends Transaction implements Runnable {
                     // Save the received PDU (must be a M-RETRIEVE.CONF).
                     PduPersister p = PduPersister.getPduPersister(mContext);
                     Uri uri = p.persist(pdu, Inbox.CONTENT_URI, true,
-                            com.klinker.android.send_message.Transaction.settings.getGroup(), null);
+                            com.stream.custommessaging.Transaction.settings.getGroup(), null);
 
                     // Use local time instead of PDU time
                     ContentValues values = new ContentValues(1);
@@ -217,7 +217,7 @@ public class NotificationTransaction extends Transaction implements Runnable {
                     BroadcastUtils.sendExplicitBroadcast(
                             mContext,
                             new Intent(),
-                            com.klinker.android.send_message.Transaction.NOTIFY_OF_MMS);
+                            com.stream.custommessaging.Transaction.NOTIFY_OF_MMS);
                 }
             }
 

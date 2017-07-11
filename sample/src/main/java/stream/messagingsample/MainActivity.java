@@ -31,13 +31,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.klinker.android.logger.Log;
-import com.klinker.android.logger.OnLogListener;
-import com.klinker.android.send_message.ApnUtils;
-import com.klinker.android.send_message.BroadcastUtils;
-import com.klinker.android.send_message.Message;
-import com.klinker.android.send_message.Transaction;
-import com.klinker.android.send_message.Utils;
+import android.util.Log;
+import com.stream.custommessaging.ApnUtils;
+import com.stream.custommessaging.BroadcastUtils;
+import com.stream.custommessaging.Message;
+import com.stream.custommessaging.Transaction;
+import com.stream.custommessaging.Utils;
 
 import java.util.ArrayList;
 
@@ -73,7 +72,6 @@ public class MainActivity extends Activity {
         initSettings();
         initViews();
         initActions();
-        initLogging();
 
         BroadcastUtils.sendExplicitBroadcast(this, new Intent(), "test action");
     }
@@ -149,17 +147,6 @@ public class MainActivity extends Activity {
         log.setAdapter(logAdapter);
     }
 
-    private void initLogging() {
-        Log.setDebug(true);
-        Log.setPath("messenger_log.txt");
-        Log.setLogListener(new OnLogListener() {
-            @Override
-            public void onLogged(String tag, String message) {
-                //logAdapter.addItem(tag + ": " + message);
-            }
-        });
-    }
-
     private void setDefaultSmsApp() {
         setDefaultAppButton.setVisibility(View.GONE);
         Intent intent =
@@ -183,7 +170,7 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                com.klinker.android.send_message.Settings sendSettings = new com.klinker.android.send_message.Settings();
+                com.stream.custommessaging.Settings sendSettings = new com.stream.custommessaging.Settings();
                 sendSettings.setMmsc(settings.getMmsc());
                 sendSettings.setProxy(settings.getMmsProxy());
                 sendSettings.setPort(settings.getMmsPort());

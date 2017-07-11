@@ -18,13 +18,14 @@ package com.android.mms;
 
 import java.io.IOException;
 
-import com.klinker.android.send_message.R;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
-import com.klinker.android.logger.Log;
+import android.util.Log;
+
+import stream.custommessaging.R;
 
 public class MmsConfig {
     private static final String TAG = "MmsConfig";

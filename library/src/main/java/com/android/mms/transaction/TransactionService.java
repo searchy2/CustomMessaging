@@ -54,13 +54,14 @@ import com.google.android.mms.pdu_alt.NotificationInd;
 import com.google.android.mms.pdu_alt.PduHeaders;
 import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
-import com.klinker.android.logger.Log;
-import com.klinker.android.send_message.BroadcastUtils;
-import com.klinker.android.send_message.R;
-import com.klinker.android.send_message.Utils;
+import android.util.Log;
+import com.stream.custommessaging.BroadcastUtils;
+import com.stream.custommessaging.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import stream.custommessaging.R;
 
 /**
  * The TransactionService of the MMS Client is responsible for handling requests
@@ -311,8 +312,8 @@ public class TransactionService extends Service implements Observer {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             boolean useSystem = true;
-                            if (com.klinker.android.send_message.Transaction.settings != null) {
-                                useSystem = com.klinker.android.send_message.Transaction.settings
+                            if (com.stream.custommessaging.Transaction.settings != null) {
+                                useSystem = com.stream.custommessaging.Transaction.settings
                                         .getUseSystemSending();
                             } else {
                                 useSystem = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1138,7 +1139,7 @@ public class TransactionService extends Service implements Observer {
                         BroadcastUtils.sendExplicitBroadcast(
                                 TransactionService.this,
                                 new Intent(),
-                                com.klinker.android.send_message.Transaction.MMS_ERROR);
+                                com.stream.custommessaging.Transaction.MMS_ERROR);
                         mServiceHandler.markAllPendingTransactionsAsFailed();
                         endMmsConnectivity();
                         stopSelf();

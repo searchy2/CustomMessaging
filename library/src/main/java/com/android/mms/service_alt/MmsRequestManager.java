@@ -29,6 +29,7 @@ import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.RetrieveConf;
 import com.google.android.mms.util_alt.SqliteWrapper;
+import com.stream.custommessaging.Transaction;
 
 public class MmsRequestManager implements MmsRequest.RequestManager {
 
@@ -78,7 +79,7 @@ public class MmsRequestManager implements MmsRequest.RequestManager {
             boolean group;
 
             try {
-                group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                group = Transaction.settings.getGroup();
             } catch (Exception e) {
                 group = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("group_message", true);
             }
@@ -100,7 +101,7 @@ public class MmsRequestManager implements MmsRequest.RequestManager {
             // Don't mark the transaction as failed if we failed to send it.
             // sendAcknowledgeInd(retrieveConf);
         } catch (Throwable t) {
-            com.klinker.android.logger.Log.e(TAG, "error", t);
+           Log.e(TAG, "error", t);
         }
 
         return false;

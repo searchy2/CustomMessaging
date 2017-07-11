@@ -36,9 +36,9 @@ import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.SendConf;
 import com.google.android.mms.pdu_alt.SendReq;
-import com.klinker.android.logger.Log;
-import com.klinker.android.send_message.BroadcastUtils;
-import com.klinker.android.send_message.Utils;
+import android.util.Log;
+import com.stream.custommessaging.BroadcastUtils;
+import com.stream.custommessaging.Utils;
 
 import java.util.Arrays;
 
@@ -175,10 +175,10 @@ public class SendTransaction extends Transaction implements Runnable {
                 Log.e(TAG, "Delivery failed.");
                 builder.append("Delivery failed\n");
 
-                Intent intent = new Intent(com.klinker.android.send_message.Transaction.MMS_ERROR);
+                Intent intent = new Intent(com.stream.custommessaging.Transaction.MMS_ERROR);
                 intent.putExtra("stack", builder.toString());
                 BroadcastUtils.sendExplicitBroadcast(
-                        mContext, intent, com.klinker.android.send_message.Transaction.MMS_ERROR);
+                        mContext, intent, com.stream.custommessaging.Transaction.MMS_ERROR);
             }
             notifyObservers();
         }

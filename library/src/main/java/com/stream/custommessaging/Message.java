@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.graphics.Bitmap;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

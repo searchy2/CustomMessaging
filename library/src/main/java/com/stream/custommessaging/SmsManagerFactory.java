@@ -1,4 +1,4 @@
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.os.Build;
 import android.telephony.SmsManager;

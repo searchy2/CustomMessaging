@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -33,7 +33,7 @@ import com.android.mms.MmsConfig;
 import com.android.mms.service_alt.MmsNetworkManager;
 import com.android.mms.service_alt.MmsRequestManager;
 import com.android.mms.service_alt.SendRequest;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 import android.widget.Toast;
 import com.android.mms.dom.smil.parser.SmilXmlSerializer;
 import com.android.mms.transaction.MmsMessageSender;

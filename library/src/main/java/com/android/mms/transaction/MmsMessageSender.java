@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 import android.provider.Telephony.Mms;
 import android.provider.Telephony.MmsSms;
 import android.provider.Telephony.MmsSms.PendingMessages;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 import com.android.mms.logs.LogTag;
 import com.android.mms.util.SendingProgressTokenManager;
@@ -170,7 +170,7 @@ public class MmsMessageSender implements MessageSender {
             boolean group;
 
             try {
-                group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                group = com.stream.custommessaging.Transaction.settings.getGroup();
             } catch (Exception e) {
                 group = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("group_message", true);
             }

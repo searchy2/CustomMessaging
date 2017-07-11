@@ -24,15 +24,15 @@ import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
-import com.klinker.android.logger.Log;
-
-import com.klinker.android.send_message.R;
+import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import stream.custommessaging.R;
 
 /**
  * This class manages a cached copy of current MMS configuration key values

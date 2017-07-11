@@ -26,7 +26,7 @@ import android.database.sqlite.SqliteWrapper;
 import android.provider.Telephony.Mms.Rate;
 
 import com.android.mms.logs.LogTag;
-import com.klinker.android.logger.Log;
+import android.util.Log;
 
 public class RateController {
     private static final String TAG = LogTag.TAG;

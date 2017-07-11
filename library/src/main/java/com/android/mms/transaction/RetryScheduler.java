@@ -36,9 +36,10 @@ import com.android.mms.logs.LogTag;
 import com.android.mms.util.DownloadManager;
 import com.google.android.mms.pdu_alt.PduHeaders;
 import com.google.android.mms.pdu_alt.PduPersister;
-import com.klinker.android.logger.Log;
-import com.klinker.android.send_message.BroadcastUtils;
-import com.klinker.android.send_message.R;
+import android.util.Log;
+import com.stream.custommessaging.BroadcastUtils;
+
+import stream.custommessaging.R;
 
 public class RetryScheduler implements Observer {
     private static final String TAG = LogTag.TAG;
@@ -255,15 +256,15 @@ public class RetryScheduler implements Observer {
             context.getContentResolver().update(Mms.CONTENT_URI, values, where, null);
 
             BroadcastUtils.sendExplicitBroadcast(
-                    mContext, new Intent(), com.klinker.android.send_message.Transaction.REFRESH);
+                    mContext, new Intent(), com.stream.custommessaging.Transaction.REFRESH);
             BroadcastUtils.sendExplicitBroadcast(
                     mContext,
                     new Intent(),
-                    com.klinker.android.send_message.Transaction.NOTIFY_SMS_FAILURE);
+                    com.stream.custommessaging.Transaction.NOTIFY_SMS_FAILURE);
 
             // broadcast that mms has failed and you can notify user from there if you would like
             BroadcastUtils.sendExplicitBroadcast(
-                    mContext, new Intent(), com.klinker.android.send_message.Transaction.MMS_ERROR);
+                    mContext, new Intent(), com.stream.custommessaging.Transaction.MMS_ERROR);
         } catch (Exception e) {
         }
     }

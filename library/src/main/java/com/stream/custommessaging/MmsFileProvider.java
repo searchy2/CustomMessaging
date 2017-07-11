@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.klinker.android.send_message;
+package com.stream.custommessaging;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

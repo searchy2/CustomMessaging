@@ -47,9 +47,9 @@ import com.google.android.mms.pdu_alt.PduHeaders;
 import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.ReadOrigInd;
-import com.klinker.android.logger.Log;
-import com.klinker.android.send_message.BroadcastUtils;
-import com.klinker.android.send_message.Utils;
+import android.util.Log;
+import com.stream.custommessaging.BroadcastUtils;
+import com.stream.custommessaging.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -121,7 +121,7 @@ public class PushReceiver extends BroadcastReceiver {
                         boolean group;
 
                         try {
-                            group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                            group = com.stream.custommessaging.Transaction.settings.getGroup();
                         } catch (Exception e) {
                             group = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("group_message", true);
                         }
@@ -158,7 +158,7 @@ public class PushReceiver extends BroadcastReceiver {
                             boolean group;
 
                             try {
-                                group = com.klinker.android.send_message.Transaction.settings.getGroup();
+                                group = com.stream.custommessaging.Transaction.settings.getGroup();
                             } catch (Exception e) {
                                 group = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("group_message", true);
                             }
@@ -180,8 +180,8 @@ public class PushReceiver extends BroadcastReceiver {
                                 Log.v(TAG, "receiving on a lollipop+ device");
                                 boolean useSystem = true;
 
-                                if (com.klinker.android.send_message.Transaction.settings != null) {
-                                    useSystem = com.klinker.android.send_message.Transaction.settings
+                                if (com.stream.custommessaging.Transaction.settings != null) {
+                                    useSystem = com.stream.custommessaging.Transaction.settings
                                             .getUseSystemSending();
                                 } else {
                                     useSystem = PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -211,12 +211,12 @@ public class PushReceiver extends BroadcastReceiver {
                                             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
                                     mContext.startService(svc);
                                 } else {
-                                    Intent notificationBroadcast = new Intent(com.klinker.android.send_message.Transaction.NOTIFY_OF_MMS);
+                                    Intent notificationBroadcast = new Intent(com.stream.custommessaging.Transaction.NOTIFY_OF_MMS);
                                     notificationBroadcast.putExtra("receive_through_stock", true);
                                     BroadcastUtils.sendExplicitBroadcast(
                                             mContext,
                                             notificationBroadcast,
-                                            com.klinker.android.send_message.Transaction.NOTIFY_OF_MMS);
+                                            com.stream.custommessaging.Transaction.NOTIFY_OF_MMS);
                                 }
                             }
                         } else if (LOCAL_LOGV) {
@@ -268,12 +268,12 @@ public class PushReceiver extends BroadcastReceiver {
                 abortBroadcast();
             } else {
                 clearAbortBroadcast();
-                Intent notificationBroadcast = new Intent(com.klinker.android.send_message.Transaction.NOTIFY_OF_MMS);
+                Intent notificationBroadcast = new Intent(com.stream.custommessaging.Transaction.NOTIFY_OF_MMS);
                 notificationBroadcast.putExtra("receive_through_stock", true);
                 BroadcastUtils.sendExplicitBroadcast(
                         context,
                         notificationBroadcast,
-                        com.klinker.android.send_message.Transaction.NOTIFY_OF_MMS);
+                        com.stream.custommessaging.Transaction.NOTIFY_OF_MMS);
 
                 Log.v("mms_receiver", context.getPackageName() + " received and not aborted");
             }
