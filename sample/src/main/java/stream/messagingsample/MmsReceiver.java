@@ -16,7 +16,7 @@
 
 package stream.messagingsample;
 
-import stream.android.mms.transaction.PushReceiver;
+import com.android.mms.transaction.PushReceiver;
 
 /**
  * Needed to make default sms app for testing

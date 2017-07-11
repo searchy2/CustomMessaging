@@ -49,7 +49,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="stream.android.mms.transaction.TransactionService" />
+        <service android:name="com.android.mms.transaction.TransactionService" />
 
         <receiver
             android:name="stream.messagingsample.SmsReceiver"
@@ -69,11 +69,11 @@
         </receiver>
 
         <receiver
-            android:name="stream.messagingsample.android.send_message.MmsSentReceiver"
+            android:name="com.klinker.android.send_message.MmsSentReceiver"
             android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
 
         <receiver
-            android:name="stream.messagingsample.android.send_message.MmsReceivedReceiver"
+            android:name="com.klinker.android.send_message.MmsReceivedReceiver"
             android:taskAffinity="com.klinker.android.messaging.MMS_RECEIVED"/>
 
         <service

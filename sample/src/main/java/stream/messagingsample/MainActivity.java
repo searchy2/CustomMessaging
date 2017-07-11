@@ -33,11 +33,11 @@ import android.widget.ImageView;
 
 import com.klinker.android.logger.Log;
 import com.klinker.android.logger.OnLogListener;
-import stream.messagingsample.android.send_message.ApnUtils;
-import stream.messagingsample.android.send_message.BroadcastUtils;
-import stream.messagingsample.android.send_message.Message;
-import stream.messagingsample.android.send_message.Transaction;
-import stream.messagingsample.android.send_message.Utils;
+import com.klinker.android.send_message.ApnUtils;
+import com.klinker.android.send_message.BroadcastUtils;
+import com.klinker.android.send_message.Message;
+import com.klinker.android.send_message.Transaction;
+import com.klinker.android.send_message.Utils;
 
 import java.util.ArrayList;
 
@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        setContentView(stream.messagingsample.android.messaging_sample.R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         initSettings();
         initViews();
@@ -97,14 +97,14 @@ public class MainActivity extends Activity {
     }
 
     private void initViews() {
-        setDefaultAppButton = (Button) findViewById(stream.messagingsample.android.messaging_sample.R.id.set_as_default);
-        selectApns = (Button) findViewById(stream.messagingsample.android.messaging_sample.R.id.apns);
-        fromField = (EditText) findViewById(stream.messagingsample.android.messaging_sample.R.id.from);
-        toField = (EditText) findViewById(stream.messagingsample.android.messaging_sample.R.id.to);
-        messageField = (EditText) findViewById(stream.messagingsample.android.messaging_sample.R.id.message);
-        imageToSend = (ImageView) findViewById(stream.messagingsample.android.messaging_sample.R.id.image);
-        sendButton = (Button) findViewById(stream.messagingsample.android.messaging_sample.R.id.send);
-        log = (RecyclerView) findViewById(stream.messagingsample.android.messaging_sample.R.id.log);
+        setDefaultAppButton = (Button) findViewById(R.id.set_as_default);
+        selectApns = (Button) findViewById(R.id.apns);
+        fromField = (EditText) findViewById(R.id.from);
+        toField = (EditText) findViewById(R.id.to);
+        messageField = (EditText) findViewById(R.id.message);
+        imageToSend = (ImageView) findViewById(R.id.image);
+        sendButton = (Button) findViewById(R.id.send);
+        log = (RecyclerView) findViewById(R.id.log);
     }
 
     private void initActions() {
@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                stream.messagingsample.android.send_message.Settings sendSettings = new stream.messagingsample.android.send_message.Settings();
+                com.klinker.android.send_message.Settings sendSettings = new com.klinker.android.send_message.Settings();
                 sendSettings.setMmsc(settings.getMmsc());
                 sendSettings.setProxy(settings.getMmsProxy());
                 sendSettings.setPort(settings.getMmsPort());
@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
                 Message message = new Message(messageField.getText().toString(), toField.getText().toString());
 
                 if (imageToSend.isEnabled()) {
-                    message.setImage(BitmapFactory.decodeResource(getResources(), stream.messagingsample.android.messaging_sample.R.drawable.android));
+                    message.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.android));
                 }
 
                 transaction.sendNewMessage(message, Transaction.NO_THREAD_ID);

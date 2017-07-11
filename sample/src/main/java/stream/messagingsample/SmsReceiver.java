@@ -41,11 +41,10 @@ public class SmsReceiver extends BroadcastReceiver {
         Notification notification = new Notification.Builder(context)
                 .setContentText(body)
                 .setContentTitle("New Message")
-                .setSmallIcon(stream.messagingsample.android.messaging_sample.R.drawable.ic_alert)
+                .setSmallIcon(stream.messagingsample.R.drawable.ic_alert)
                 .setStyle(new Notification.BigTextStyle().bigText(body))
                 .build();
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(1, notification);
     }
-
 }
