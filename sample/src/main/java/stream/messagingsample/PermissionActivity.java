@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package com.klinker.android.messaging_sample;
+package stream.messagingsample;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import com.klinker.android.messaging_sample.R;
 
 public class PermissionActivity extends Activity {
 

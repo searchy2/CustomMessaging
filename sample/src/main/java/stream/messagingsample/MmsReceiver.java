@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.klinker.android.messaging_sample;
+package stream.messagingsample;
 
-import com.android.mms.transaction.PushReceiver;
+import stream.android.mms.transaction.PushReceiver;
 
 /**
  * Needed to make default sms app for testing

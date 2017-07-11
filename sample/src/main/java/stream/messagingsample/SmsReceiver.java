@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.klinker.android.messaging_sample;
+package stream.messagingsample;
 
 import android.app.Notification;
 import android.content.BroadcastReceiver;
@@ -41,7 +41,7 @@ public class SmsReceiver extends BroadcastReceiver {
         Notification notification = new Notification.Builder(context)
                 .setContentText(body)
                 .setContentTitle("New Message")
-                .setSmallIcon(R.drawable.ic_alert)
+                .setSmallIcon(stream.messagingsample.android.messaging_sample.R.drawable.ic_alert)
                 .setStyle(new Notification.BigTextStyle().bigText(body))
                 .build();
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);

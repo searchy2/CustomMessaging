@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.klinker.android.messaging_sample;
+package stream.messagingsample;
 
 import android.app.AlertDialog;
 import android.content.Context;
