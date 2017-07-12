@@ -14,7 +14,7 @@ The old entry looks like this:
 <receiver
     android:name=".MmsSentReceiver">
     <intent-filter>
-        <action android:name="com.klinker.android.messaging.MMS_SENT" />
+        <action android:name="com.stream.custommessaging.MMS_SENT" />
     </intent-filter>
 </receiver>
 ```
@@ -24,7 +24,7 @@ The changes should look like this:
 ```java
 <receiver
     android:name=".MmsSentReceiver"
-    android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
+    android:taskAffinity="com.stream.custommessaging.MMS_SENT"/>
 ```
 
 For a full example, here are the receivers from one of my own apps:
@@ -67,7 +67,7 @@ For a full example, here are the receivers from one of my own apps:
     android:name=".receiver.MmsSentReceiver"
     android:exported="true">
     <intent-filter>
-        <action android:name="com.klinker.android.messaging.MMS_SENT" />
+        <action android:name="com.stream.custommessaging.MMS_SENT" />
     </intent-filter>
 </receiver>
 
@@ -75,7 +75,7 @@ For a full example, here are the receivers from one of my own apps:
     android:name=".receiver.MmsReceivedReceiver"
     android:exported="true">
     <intent-filter>
-        <action android:name="com.klinker.android.messaging.MMS_RECEIVED" />
+        <action android:name="com.stream.custommessaging.MMS_RECEIVED" />
     </intent-filter>
 </receiver>
 ```
@@ -110,9 +110,9 @@ After the changes, this gets reduced to the following:
 
 <receiver
     android:name=".receiver.MmsSentReceiver"
-    android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
+    android:taskAffinity="com.stream.custommessaging.MMS_SENT"/>
 
 <receiver
     android:name=".receiver.MmsReceivedReceiver"
-    android:taskAffinity="com.klinker.android.messaging.MMS_RECEIVED"/>
+    android:taskAffinity="com.stream.custommessaging.MMS_RECEIVED"/>
 ```

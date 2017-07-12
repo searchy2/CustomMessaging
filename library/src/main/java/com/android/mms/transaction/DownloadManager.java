@@ -20,7 +20,6 @@ import android.text.TextUtils;
 import com.android.mms.MmsConfig;
 import android.util.Log;
 import com.stream.custommessaging.BroadcastUtils;
-import com.stream.custommessaging.MmsReceivedReceiver;
 
 import java.io.File;
 import java.util.Random;
@@ -35,6 +34,11 @@ public class DownloadManager {
     private static final String TAG = "DownloadManager";
     private static DownloadManager ourInstance = new DownloadManager();
     private static final ConcurrentHashMap<String, MmsDownloadReceiver> mMap = new ConcurrentHashMap<>();
+
+    public static final String EXTRA_FILE_PATH = "file_path";
+    public static final String EXTRA_LOCATION_URL = "location_url";
+    public static final String EXTRA_TRIGGER_PUSH = "trigger_push";
+    public static final String EXTRA_URI = "notification_ind_uri";
 
     public static DownloadManager getInstance() {
         return ourInstance;
@@ -69,10 +73,10 @@ public class DownloadManager {
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .build();
         Intent download = new Intent(receiver.mAction);
-        download.putExtra(MmsReceivedReceiver.EXTRA_FILE_PATH, mDownloadFile.getPath());
-        download.putExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL, location);
-        download.putExtra(MmsReceivedReceiver.EXTRA_TRIGGER_PUSH, byPush);
-        download.putExtra(MmsReceivedReceiver.EXTRA_URI, uri);
+        download.putExtra(EXTRA_FILE_PATH, mDownloadFile.getPath());
+        download.putExtra(EXTRA_LOCATION_URL, location);
+        download.putExtra(EXTRA_TRIGGER_PUSH, byPush);
+        download.putExtra(EXTRA_URI, uri);
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context, 0, download, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -96,6 +100,7 @@ public class DownloadManager {
     private static class MmsDownloadReceiver extends BroadcastReceiver {
         private static final String ACTION_PREFIX = "com.android.mms.transaction.DownloadManager$MmsDownloadReceiver.";
         private final String mAction;
+        public String MMS_RECEIVED = ".MMS_RECEIVED";
 
         MmsDownloadReceiver() {
             mAction = ACTION_PREFIX + UUID.randomUUID().toString();
@@ -103,6 +108,9 @@ public class DownloadManager {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            MMS_RECEIVED = context.getPackageName() + MMS_RECEIVED;
+
             context.unregisterReceiver(this);
 
             PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
@@ -110,8 +118,8 @@ public class DownloadManager {
             wakeLock.acquire(60 * 1000);
 
             Intent newIntent = (Intent) intent.clone();
-            newIntent.setAction(MmsReceivedReceiver.MMS_RECEIVED);
-            BroadcastUtils.sendExplicitBroadcast(context, newIntent, MmsReceivedReceiver.MMS_RECEIVED);
+            newIntent.setAction(MMS_RECEIVED);
+            BroadcastUtils.sendExplicitBroadcast(context, newIntent, MMS_RECEIVED);
         }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stream.custommessaging;
+package stream.messagingsample;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -24,6 +24,8 @@ import android.net.Uri;
 import android.provider.Telephony;
 
 import com.google.android.mms.util_alt.SqliteWrapper;
+import com.stream.custommessaging.Transaction;
+
 import android.util.Log;
 
 import java.io.File;
@@ -32,15 +34,11 @@ public class MmsSentReceiver extends BroadcastReceiver {
 
     private static final String TAG = "MmsSentReceiver";
 
-    public static final String MMS_SENT = "com.klinker.android.messaging.MMS_SENT";
-    public static final String EXTRA_CONTENT_URI = "content_uri";
-    public static final String EXTRA_FILE_PATH = "file_path";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "MMS has finished sending, marking it as so in the database");
 
-        Uri uri = Uri.parse(intent.getStringExtra(EXTRA_CONTENT_URI));
+        Uri uri = Uri.parse(intent.getStringExtra(Transaction.EXTRA_CONTENT_URI));
         Log.v(TAG, uri.toString());
 
         ContentValues values = new ContentValues(1);
@@ -48,9 +46,8 @@ public class MmsSentReceiver extends BroadcastReceiver {
         SqliteWrapper.update(context, context.getContentResolver(), uri, values,
                 null, null);
 
-        String filePath = intent.getStringExtra(EXTRA_FILE_PATH);
+        String filePath = intent.getStringExtra(Transaction.EXTRA_FILE_PATH);
         Log.v(TAG, filePath);
         new File(filePath).delete();
     }
-
 }

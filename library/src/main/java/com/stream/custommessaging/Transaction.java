@@ -71,6 +71,11 @@ public class Transaction {
 
     public String SMS_SENT = ".SMS_SENT";
     public String SMS_DELIVERED = ".SMS_DELIVERED";
+    public String MMS_SENT = ".MMS_SENT";
+    public Integer savedID = -1;
+    public static final String EXTRA_ID = "savedid";
+    public static final String EXTRA_CONTENT_URI = "content_uri";
+    public static final String EXTRA_FILE_PATH = "file_path";
 
     public static String NOTIFY_SMS_FAILURE = ".NOTIFY_SMS_FAILURE";
     public static final String MMS_ERROR = "MMS_ERROR";
@@ -102,6 +107,10 @@ public class Transaction {
 
         SMS_SENT = context.getPackageName() + SMS_SENT;
         SMS_DELIVERED = context.getPackageName() + SMS_DELIVERED;
+        MMS_SENT = context.getPackageName() + MMS_SENT;
+
+        Log.d("Transaction", SMS_SENT);
+        Log.d("Transaction", SMS_DELIVERED);
 
         if (NOTIFY_SMS_FAILURE.equals(".NOTIFY_SMS_FAILURE")) {
             NOTIFY_SMS_FAILURE = context.getPackageName() + NOTIFY_SMS_FAILURE;
@@ -117,6 +126,8 @@ public class Transaction {
      */
     public void sendNewMessage(Message message, long threadId) {
         this.saveMessage = message.getSave();
+        this.savedID = message.getID();
+        Log.d("Transaction Saved ID", String.valueOf(savedID));
 
         // if message:
         //      1) Has images attached
@@ -133,11 +144,10 @@ public class Transaction {
             try { Looper.prepare(); } catch (Exception e) { }
             RateController.init(context);
             DownloadManager.init(context);
-            sendMmsMessage(message.getText(), message.getAddresses(), message.getImages(), message.getImageNames(), message.getParts(), message.getSubject());
+            sendMmsMessage(message);
         } else {
-            sendSmsMessage(message.getText(), message.getAddresses(), threadId, message.getDelay());
+            sendSmsMessage(message, threadId);
         }
-
     }
 
     /**
@@ -179,18 +189,21 @@ public class Transaction {
         return this;
     }
 
-    private void sendSmsMessage(String text, String[] addresses, long threadId, int delay) {
-        Log.v("send_transaction", "message text: " + text);
+    private void sendSmsMessage(Message message, long threadId) {
+        String text = message.getText();
+        String[] addresses = message.getAddresses();
+        int delay = message.getDelay();
+        Log.d("send_transaction", "contact text: " + text);
         Uri messageUri = null;
         int messageId = 0;
         if (saveMessage) {
-            Log.v("send_transaction", "saving message");
+            Log.d("send_transaction", "saving contact");
             // add signature to original text to be saved in database (does not strip unicode for saving though)
             if (!settings.getSignature().equals("")) {
                 text += "\n" + settings.getSignature();
             }
 
-            // save the message for each of the addresses
+            // save the contact for each of the addresses
             for (int i = 0; i < addresses.length; i++) {
                 Calendar cal = Calendar.getInstance();
                 ContentValues values = new ContentValues();
@@ -230,6 +243,7 @@ public class Transaction {
                 }
 
                 sentIntent.putExtra("message_uri", messageUri == null ? "" : messageUri.toString());
+                sentIntent.putExtra(EXTRA_ID, savedID);
                 PendingIntent sentPI = PendingIntent.getBroadcast(
                         context, messageId, sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -242,6 +256,7 @@ public class Transaction {
                 }
 
                 deliveredIntent.putExtra("message_uri", messageUri == null ? "" : messageUri.toString());
+                deliveredIntent.putExtra(EXTRA_ID, savedID);
                 PendingIntent deliveredPI = PendingIntent.getBroadcast(
                         context, messageId, deliveredIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -366,7 +381,13 @@ public class Transaction {
         }
     }
 
-    private void sendMmsMessage(String text, String[] addresses, Bitmap[] image, String[] imageNames, List<Message.Part> parts, String subject) {
+    private void sendMmsMessage(Message message) {
+        String text = message.getText();
+        String[] addresses = message.getAddresses();
+        Bitmap[] image = message.getImages();
+        String[] imageNames = message.getImageNames();
+        List<Message.Part> parts = message.getParts();
+        String subject = message.getSubject();
         // merge the string[] of addresses into a single string so they can be inserted into the database easier
         String address = "";
 
@@ -385,7 +406,7 @@ public class Transaction {
 
             MMSPart part = new MMSPart();
             part.MimeType = "image/jpeg";
-            part.Name = (imageNames != null) ? imageNames[i] : ("image_" + System.currentTimeMillis());
+            part.Name = (imageNames != null) ? imageNames[i] : ("IMAGE_" + System.currentTimeMillis());
             part.Data = imageBytes;
             data.add(part);
         }
@@ -485,7 +506,7 @@ public class Transaction {
 
     public static MessageInfo getBytes(Context context, boolean saveMessage, String[] recipients,
                                        MMSPart[] parts, String subject)
-                throws MmsException {
+            throws MmsException {
         final SendReq sendRequest = new SendReq();
 
         // create send request addresses
@@ -608,8 +629,8 @@ public class Transaction {
     public static final long DEFAULT_EXPIRY_TIME = 7 * 24 * 60 * 60;
     public static final int DEFAULT_PRIORITY = PduHeaders.PRIORITY_NORMAL;
 
-    private static void sendMmsThroughSystem(Context context, String subject, List<MMSPart> parts,
-                                             String[] addresses, Intent explicitSentMmsReceiver) {
+    private void sendMmsThroughSystem(Context context, String subject, List<MMSPart> parts,
+                                      String[] addresses, Intent explicitSentMmsReceiver) {
         try {
             final String fileName = "send." + String.valueOf(Math.abs(new Random().nextLong())) + ".dat";
             File mSendFile = new File(context.getCacheDir(), fileName);
@@ -621,14 +642,15 @@ public class Transaction {
 
             Intent intent;
             if (explicitSentMmsReceiver == null) {
-                intent = new Intent(MmsSentReceiver.MMS_SENT);
-                BroadcastUtils.addClassName(context, intent, MmsSentReceiver.MMS_SENT);
+                intent = new Intent(MMS_SENT);
+                BroadcastUtils.addClassName(context, intent, MMS_SENT);
             } else {
                 intent = explicitSentMmsReceiver;
             }
 
-            intent.putExtra(MmsSentReceiver.EXTRA_CONTENT_URI, messageUri.toString());
-            intent.putExtra(MmsSentReceiver.EXTRA_FILE_PATH, mSendFile.getPath());
+            intent.putExtra(EXTRA_CONTENT_URI, messageUri.toString());
+            intent.putExtra(EXTRA_FILE_PATH, mSendFile.getPath());
+            intent.putExtra(EXTRA_ID, savedID);
             final PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -921,5 +943,4 @@ public class Transaction {
                 (message.getAddresses().length > 1 && settings.getGroup()) ||
                 message.getSubject() != null;
     }
-
 }

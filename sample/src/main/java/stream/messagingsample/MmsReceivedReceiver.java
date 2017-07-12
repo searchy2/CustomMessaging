@@ -1,10 +1,26 @@
-package com.stream.custommessaging;
+/*
+ * Copyright (C) 2015 Jacob Klinker
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import android.app.IntentService;
+package stream.messagingsample;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.provider.Telephony;
 import android.telephony.SmsManager;
 
@@ -26,34 +42,32 @@ import com.google.android.mms.pdu_alt.PduParser;
 import com.google.android.mms.pdu_alt.PduPersister;
 import com.google.android.mms.pdu_alt.RetrieveConf;
 import com.google.android.mms.util_alt.SqliteWrapper;
+import com.stream.custommessaging.Utils;
+
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.google.android.mms.pdu_alt.PduHeaders.STATUS_RETRIEVED;
 
-public class MmsReceivedService extends IntentService {
-    private static final String TAG = "MmsReceivedService";
+public class MmsReceivedReceiver extends BroadcastReceiver {
+    private static final String TAG = "MmsReceivedReceiver";
 
     private static final String LOCATION_SELECTION =
             Telephony.Mms.MESSAGE_TYPE + "=? AND " + Telephony.Mms.CONTENT_LOCATION + " =?";
 
-    public MmsReceivedService() {
-        super("MmsReceivedService");
-    }
-
-    public MmsReceivedService(String name) {
-        super(name);
-    }
+    private static final ExecutorService RECEIVE_NOTIFICATION_EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "MMS has finished downloading, persisting it to the database");
 
-        String path = intent.getStringExtra(MmsReceivedReceiver.EXTRA_FILE_PATH);
+        String path = intent.getStringExtra(DownloadManager.EXTRA_FILE_PATH);
         Log.v(TAG, path);
 
         FileInputStream reader = null;
@@ -64,17 +78,20 @@ public class MmsReceivedService extends IntentService {
             final byte[] response = new byte[nBytes];
             reader.read(response, 0, nBytes);
 
-            CommonNotificationTask task = getNotificationTask(this, intent, response);
-            executeNotificationTask(task);
+            CommonAsyncTask task = getNotificationTask(context, intent, response);
 
-            DownloadRequest.persist(this, response,
-                    new MmsConfig.Overridden(new MmsConfig(this), null),
-                    intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL),
+            DownloadRequest.persist(context, response,
+                    new MmsConfig.Overridden(new MmsConfig(context), null),
+                    intent.getStringExtra(DownloadManager.EXTRA_LOCATION_URL),
                     Utils.getDefaultSubscriptionId(), null);
 
             Log.v(TAG, "response saved successfully");
             Log.v(TAG, "response length: " + response.length);
             mDownloadFile.delete();
+
+            if (task != null) {
+                task.executeOnExecutor(RECEIVE_NOTIFICATION_EXECUTOR);
+            }
         } catch (FileNotFoundException e) {
             Log.e(TAG, "MMS received, file not found exception", e);
         } catch (IOException e) {
@@ -87,17 +104,13 @@ public class MmsReceivedService extends IntentService {
                     Log.e(TAG, "MMS received, io exception", e);
                 }
             }
-
-            handleHttpError(this, intent);
-            DownloadManager.finishDownload(intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL));
         }
+
+        handleHttpError(context, intent);
+        DownloadManager.finishDownload(intent.getStringExtra(DownloadManager.EXTRA_LOCATION_URL));
     }
 
-    private static void handleHttpError(Context context, Intent intent) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return;
-        }
-        
+    private void handleHttpError(Context context, Intent intent) {
         final int httpError = intent.getIntExtra(SmsManager.EXTRA_MMS_HTTP_STATUS, 0);
         if (httpError == 404 ||
                 httpError == 400) {
@@ -108,22 +121,22 @@ public class MmsReceivedService extends IntentService {
                     LOCATION_SELECTION,
                     new String[]{
                             Integer.toString(PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND),
-                            intent.getStringExtra(MmsReceivedReceiver.EXTRA_LOCATION_URL)
+                            intent.getStringExtra(DownloadManager.EXTRA_LOCATION_URL)
                     });
         }
     }
 
     private static NotificationInd getNotificationInd(Context context, Intent intent) throws MmsException {
-        return (NotificationInd) PduPersister.getPduPersister(context).load((Uri) intent.getParcelableExtra(MmsReceivedReceiver.EXTRA_URI));
+        return (NotificationInd) PduPersister.getPduPersister(context).load((Uri) intent.getParcelableExtra(DownloadManager.EXTRA_URI));
     }
 
-    private static abstract class CommonNotificationTask {
+    private static abstract class CommonAsyncTask extends AsyncTask<Void, Void, Void> {
         protected final Context mContext;
         private final TransactionSettings mTransactionSettings;
         final NotificationInd mNotificationInd;
         final String mContentLocation;
 
-        CommonNotificationTask(Context context, TransactionSettings settings, NotificationInd ind) {
+        CommonAsyncTask(Context context, TransactionSettings settings, NotificationInd ind) {
             mContext = context;
             mTransactionSettings = settings;
             mNotificationInd = ind;
@@ -172,8 +185,8 @@ public class MmsReceivedService extends IntentService {
          *         an HTTP error code(>=400) returned from the server.
          * @throws com.google.android.mms.MmsException if pdu is null.
          */
-        private byte[] sendPdu(final long token, final byte[] pdu,
-                               final String mmscUrl) throws IOException, MmsException {
+        private byte[] sendPdu(long token, byte[] pdu,
+                       String mmscUrl) throws IOException, MmsException {
             if (pdu == null) {
                 throw new MmsException();
             }
@@ -190,30 +203,24 @@ public class MmsReceivedService extends IntentService {
                         false, null, 0);
             }
 
-            return Utils.ensureRouteToMmsNetwork(mContext, mmscUrl, mTransactionSettings.getProxyAddress(), new Utils.Task<byte[]>() {
-                @Override
-                public byte[] run() throws IOException {
-                    return HttpUtils.httpConnection(
-                            mContext, token,
-                            mmscUrl,
-                            pdu, HttpUtils.HTTP_POST_METHOD,
-                            mTransactionSettings.isProxySet(),
-                            mTransactionSettings.getProxyAddress(),
-                            mTransactionSettings.getProxyPort());
-                }
-            });
+            Utils.ensureRouteToHost(mContext, mmscUrl, mTransactionSettings.getProxyAddress());
+            return HttpUtils.httpConnection(
+                    mContext, token,
+                    mmscUrl,
+                    pdu, HttpUtils.HTTP_POST_METHOD,
+                    mTransactionSettings.isProxySet(),
+                    mTransactionSettings.getProxyAddress(),
+                    mTransactionSettings.getProxyPort());
         }
-
-        public abstract void run() throws IOException;
     }
 
-    private static class NotifyRespTask extends CommonNotificationTask {
+    private static class NotifyRespTask extends CommonAsyncTask {
         NotifyRespTask(Context context, NotificationInd ind, TransactionSettings settings) {
             super(context, settings, ind);
         }
 
         @Override
-        public void run() throws IOException {
+        protected Void doInBackground(Void... params) {
             // Create the M-NotifyResp.ind
             NotifyRespInd notifyRespInd = null;
             try {
@@ -230,11 +237,14 @@ public class MmsReceivedService extends IntentService {
                 }
             } catch (MmsException e) {
                 Log.e(TAG, "error", e);
+            } catch (IOException e) {
+                Log.e(TAG, "error", e);
             }
+            return null;
         }
     }
 
-    private static class AcknowledgeIndTask extends CommonNotificationTask {
+    private static class AcknowledgeIndTask extends CommonAsyncTask {
         private final RetrieveConf mRetrieveConf;
 
         AcknowledgeIndTask(Context context, NotificationInd ind, TransactionSettings settings, RetrieveConf rc) {
@@ -243,7 +253,7 @@ public class MmsReceivedService extends IntentService {
         }
 
         @Override
-        public void run() throws IOException {
+        protected Void doInBackground(Void... params) {
             // Send M-Acknowledge.ind to MMSC if required.
             // If the Transaction-ID isn't set in the M-Retrieve.conf, it means
             // the MMS proxy-relay doesn't require an ACK.
@@ -269,12 +279,15 @@ public class MmsReceivedService extends IntentService {
                     Log.e(TAG, "error", e);
                 } catch (MmsException e) {
                     Log.e(TAG, "error", e);
+                } catch (IOException e) {
+                    Log.e(TAG, "error", e);
                 }
             }
+            return null;
         }
     }
 
-    private static CommonNotificationTask getNotificationTask(Context context, Intent intent, byte[] response) {
+    private static CommonAsyncTask getNotificationTask(Context context, Intent intent, byte[] response) {
         if (response.length == 0) {
             return null;
         }
@@ -290,7 +303,7 @@ public class MmsReceivedService extends IntentService {
         try {
             NotificationInd ind = getNotificationInd(context, intent);
             TransactionSettings transactionSettings = new TransactionSettings(context, null);
-            if (intent.getBooleanExtra(MmsReceivedReceiver.EXTRA_TRIGGER_PUSH, false)) {
+            if (intent.getBooleanExtra(DownloadManager.EXTRA_TRIGGER_PUSH, false)) {
                 return new NotifyRespTask(context, ind, transactionSettings);
             } else {
                 return new AcknowledgeIndTask(context, ind, transactionSettings, (RetrieveConf) pdu);
@@ -298,20 +311,6 @@ public class MmsReceivedService extends IntentService {
         } catch (MmsException e) {
             Log.e(TAG, "error", e);
             return null;
-        }
-    }
-
-    private static void executeNotificationTask(CommonNotificationTask task) throws IOException {
-        if (task == null) {
-            return;
-        }
-
-        try {
-            // need retry ?
-            task.run();
-        } catch (IOException e) {
-            Log.e(TAG, "MMS send received notification, io exception", e);
-            throw e;
         }
     }
 }

@@ -60,10 +60,10 @@ You'll also need to register a few receivers for when the messages have been sen
 <!-- Your custom receiver which is child of MmsSentReceiver -->
 <receiver
     android:name="[insert your custom receiver here. eg. com.example.sms_mms.receivers.MyMmsSentReceiver]"
-    android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
+    android:taskAffinity="com.stream.custommessaging.MMS_SENT"/>
 ```
 
-Be sure to replace the [insert package name here] with your package name defined in the manifest. For example, Sliding Messaging's is com.klinker.android.messaging_donate.
+Be sure to replace the [insert package name here] with your package name defined in the manifest. For example, Sliding Messaging's is com.stream.custommessaging_donate.
 
 Lastly, you'll need to include permissions in your manifest depending on what you want to do. Here are all of them (there are a lot unfortunately):
 

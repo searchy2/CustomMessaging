@@ -69,12 +69,12 @@
         </receiver>
 
         <receiver
-            android:name="com.stream.custommessaging.MmsSentReceiver"
-            android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
+            android:name=".MmsSentReceiver"
+            android:taskAffinity="stream.messagingsample.MMS_SENT"/>
 
         <receiver
-            android:name="com.stream.custommessaging.MmsReceivedReceiver"
-            android:taskAffinity="com.klinker.android.messaging.MMS_RECEIVED"/>
+            android:name=".MmsReceivedReceiver"
+            android:taskAffinity="stream.messagingsample.MMS_RECEIVED"/>
 
         <service
             android:name="stream.messagingsample.HeadlessSmsSendService"

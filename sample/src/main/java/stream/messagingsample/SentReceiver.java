@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stream.custommessaging;
+package stream.messagingsample;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -25,6 +25,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.telephony.SmsManager;
 import android.util.Log;
+
+import com.stream.custommessaging.BroadcastUtils;
+import com.stream.custommessaging.Transaction;
 
 public class SentReceiver extends BroadcastReceiver {
 
