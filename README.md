@@ -1,14 +1,11 @@
-# Android SMS/MMS Sending Library
+[![GitHub release](https://img.shields.io/github/release/searchy2/CustomMessaging.svg?style=flat-square)](https://github.com/searchy2/CustomMessaging/releases) [![Libraries.io for GitHub](https://img.shields.io/librariesio/github/searchy2/CustomMessaging.svg?style=flat-square)](https://github.com/searchy2/CustomMessaging) 
+[![Github file size](https://img.shields.io/badge/Size-655%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.searchy2%3ACustomMessaging%3A1.0)
+# Custom Messaging
 
-![Promo](https://raw.githubusercontent.com/klinker41/android-smsmms/master/android-messaging.png)
+![Custom Messaging Icon](https://raw.githubusercontent.com/searchy2/CustomMessaging/custom/demo/app_icon.png)
 
-These are the APIs that Google has so far left out of the Android ecosystem for easily sending any type of message without digging through source code and what not.
-
-If you've got a better way to do things, send me a pull request! The library was created specifically for [Sliding Messaging Pro](https://play.google.com/store/apps/details?id=com.klinker.android.messaging_donate&hl=en) and [EvolveSMS](https://play.google.com/store/apps/details?id=com.klinker.android.evolve_sms&hl=en) and some things work the way they do specifically for those apps.
-
-It's now used in [Pulse](https://play.google.com/store/apps/details?id=xyz.klinker.messenger) as well.
-
----
+Custom Messaging is a custom SMS/MMS sending and receiving library forked from https://github.com/klinker41/android-smsmms.
+This library exposes critical files within the Send folder so they can be overridden and customized. 
 
 ## Library Overview
 
@@ -103,18 +100,16 @@ This will invoke the MMS APIs that were made available in SDK 21. It is recommen
 
 For full details on how to implement, please check out the sample application. It has more information on permissions, creating a transaction and sending a message.
 
----
+# Gradle Dependency
 
-### Dependencies Information
+Add this line to your `build.gradle` project. Use the latest release version for the version code. 
 
-To include in your gradle project:
-
-```groovy
-compile 'com.klinkerapps:android-smsmms:4.1.1'
+```java
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+compile 'com.github.searchy2:CustomMessaging:latest-version'
 ```
-
----
-
 ## License
 
     Copyright 2017 Jacob Klinker
