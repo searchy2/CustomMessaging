@@ -1,34 +1,16 @@
-/*
- * Copyright 2013 Jacob Klinker
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.stream.custommessaging;
 
 import android.graphics.Bitmap;
+
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Class to hold all relevant message information to send
- *
- * @author Jake Klinker
- */
 public class Message {
 
     public static final class Part {
@@ -53,12 +35,16 @@ public class Message {
             return name;
         }
     }
+    private Integer id;
     private String text;
     private String subject;
     private String[] addresses;
+    private LinkedHashMap<String, ArrayList<String>> datapaths;
     private Bitmap[] images;
+    private String[] imagePaths;
     private String[] imageNames;
     private List<Part> parts = new ArrayList<Part>();
+    private Integer groupid;
     private boolean save;
     private int delay;
 
@@ -66,7 +52,6 @@ public class Message {
      * Default constructor
      */
     public Message() {
-        this("", new String[]{""});
     }
 
     /**
@@ -102,15 +87,16 @@ public class Message {
         this.images = new Bitmap[0];
         this.subject = null;
         this.save = true;
+        this.groupid = -1;
         this.delay = 0;
     }
 
     /**
      * Constructor
      *
-     * @param text      is the message to send
+     * @param text      is the contact to send
      * @param addresses is an array of phone numbers to send to
-     * @param subject   is the subject of the mms message
+     * @param subject   is the subject of the mms contact
      */
     public Message(String text, String[] addresses, String subject) {
         this.text = text;
@@ -224,9 +210,16 @@ public class Message {
     }
 
     /**
-     * Sets the message
+     * Set ID saved to database
      *
-     * @param text is the string to set message to
+     * @param id is the group ID
+     */
+    public void setID(Integer id) { this.id = id; }
+
+    /**
+     * Sets the contact
+     *
+     * @param text is the string to set contact to
      */
     public void setText(String text) {
         this.text = text;
@@ -249,6 +242,32 @@ public class Message {
     public void setAddress(String address) {
         this.addresses = new String[1];
         this.addresses[0] = address;
+    }
+
+    /**
+     * Sets data paths
+     *
+     * @param datapaths
+     */
+    public void setDataPaths(LinkedHashMap<String, ArrayList<String>> datapaths) {
+        this.datapaths = datapaths;
+    }
+
+    /**
+     * Set contact group ID
+     *
+     * @param groupID is the group ID
+     */
+    public void setGroupID(Integer groupID) {
+        this.groupid = groupID;
+    }
+
+    /**
+     * Get data paths
+     *
+     */
+    public LinkedHashMap<String, ArrayList<String>> getDataPaths() {
+        return this.datapaths;
     }
 
     /**
@@ -282,40 +301,19 @@ public class Message {
     /**
      * Sets audio file.  Must be in wav format.
      *
-     * @param audio is the single audio sample to send to recipient
+     * @param audioPath is the single audio sample to send to recipient
      */
-    @Deprecated
-    public void setAudio(byte[] audio) {
-        addAudio(audio);
+    public void addAudio(String audioPath, String mimeType, String audioName) {
+        addMedia(audioToByteArray(audioPath), mimeType, audioName);
     }
 
     /**
-     * Sets audio file.  Must be in wav format.
+     * Sets audio file.  Must be serialized to bytes
      *
      * @param audio is the single audio sample to send to recipient
      */
-    public void addAudio(byte[] audio) {
-        addAudio(audio, null);
-    }
-
-    /**
-     * Sets audio file.  Must be in wav format.
-     *
-     * @param audio is the single audio sample to send to recipient
-     * @param name is the name of the file
-     */
-    public void addAudio(byte[] audio, String name) {
-        addMedia(audio, "audio/wav", name);
-    }
-
-    /**
-     * Sets video file
-     *
-     * @param video is the single video sample to send to recipient
-     */
-    @Deprecated
-    public void setVideo(byte[] video) {
-        addVideo(video);
+    public void addAudio(byte[] audio, String mimeType) {
+        addMedia(audio, mimeType);
     }
 
     /**
@@ -323,29 +321,8 @@ public class Message {
      *
      * @param video is the single video sample to send to recipient
      */
-    public void addVideo(byte[] video) {
-        addVideo(video, null);
-    }
-
-    /**
-     * Adds video file
-     *
-     * @param video is the single video sample to send to recipient
-     * @param name is the name of the video file
-     */
-    public void addVideo(byte[] video, String name) {
-        addMedia(video, "video/3gpp", name);
-    }
-
-    /**
-     * Sets other media
-     *
-     * @param media is the media you want to send
-     * @param mimeType is the mimeType of the media
-     */
-    @Deprecated
-    public void setMedia(byte[] media, String mimeType) {
-         addMedia(media, mimeType);
+    public void addVideo(byte[] video, String mimeType) {
+        addMedia(video, mimeType);
     }
 
     /**
@@ -440,16 +417,71 @@ public class Message {
     }
 
     /**
-     * Gets the text of the message to send
+     * Add image name to object
      *
-     * @return the string of the message to send
+     * @param imageName is the path of the image to add to the String array
+     */
+    public void addImageName(String imageName) {
+        String[] temp = this.imageNames;
+
+        if (temp == null) {
+            temp = new String[0];
+            this.imageNames = new String[1];
+        }
+        else
+        {
+            this.imageNames = new String[temp.length + 1];
+        }
+
+        for (int i = 0; i < temp.length; i++) {
+            this.imageNames[i] = temp[i];
+        }
+
+        this.imageNames[temp.length] = imageName;
+    }
+
+    /**
+     * Gets id saved to database
+     *
+     * @return id as an Integer
+     */
+    public Integer getID() { return this.id; }
+
+    /**
+     * Reset contact text
+     *
+     */
+    public void resetText() {
+        this.text = "";
+    }
+
+    /**
+     * Reset images
+     *
+     */
+    public void resetImage() {
+        this.images = null;
+    }
+
+    /**
+     * Reset image names
+     *
+     */
+    public void resetImageNames() {
+        this.imageNames = null;
+    }
+
+    /**
+     * Gets the text of the contact to send
+     *
+     * @return the string of the contact to send
      */
     public String getText() {
         return this.text;
     }
 
     /**
-     * Gets the addresses of the message
+     * Gets the addresses of the contact
      *
      * @return an array of strings with all of the addresses
      */
@@ -474,7 +506,7 @@ public class Message {
     public String[] getImageNames() {
         return this.imageNames;
     }
-    
+
     /**
      * Gets the audio sample in the message
      *
@@ -512,26 +544,63 @@ public class Message {
     }
 
     /**
+     * Gets the group id of the contact
+     *
+     * @return groupid as an Integer
+     */
+    public Integer getGroupID() { return this.groupid; }
+
+    /**
      * Static method to convert a bitmap into a byte array to easily send it over http
      *
      * @param image is the image to convert
      * @return a byte array of the image data
      */
     public static byte[] bitmapToByteArray(Bitmap image) {
-		byte[] output = new byte[0];
+        byte[] output = new byte[0];
         if (image == null) {
             Log.v("Message", "image is null, returning byte array of size 0");
             return output;
         }
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			image.compress(Bitmap.CompressFormat.JPEG, 90, stream);
-			output = stream.toByteArray();
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e) {}
-		}
-		return output;
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            output = stream.toByteArray();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {}
+        }
+        return output;
+    }
+
+    /**
+     * Static method to convert audio to byte array
+     *
+     * @param audioPath is the image to convert
+     * @return a byte array of the audio data
+     */
+    public static byte[] audioToByteArray(String audioPath) {
+        byte[] output = new byte[0];
+        if (audioPath == null) {
+            Log.v("Message", "null, returning byte array of size 0");
+            return output;
+        }
+        try {
+            FileInputStream fis = new FileInputStream(audioPath);
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[512];
+            int count = 0;
+            while ( (count = fis.read(buffer)) != -1 ) {
+                fos.write(buffer, 0, count);
+            }
+            fos.close();
+
+            return fos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return output;
     }
 }

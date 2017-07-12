@@ -29,8 +29,8 @@ running Marshmallow or higher. If it has not been granted, then launch a UI to a
 ```java
 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(this)) {
     new AlertDialog.Builder(this)
-            .setMessage(com.klinker.android.send_message.R.string.write_settings_permission)
-            .setPositiveButton(com.klinker.android.send_message.R.string.ok, new DialogInterface.OnClickListener() {
+            .setMessage(R.string.write_settings_permission)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);

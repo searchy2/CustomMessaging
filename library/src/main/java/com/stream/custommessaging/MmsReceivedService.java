@@ -1,6 +1,5 @@
 package com.stream.custommessaging;
 
-
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;

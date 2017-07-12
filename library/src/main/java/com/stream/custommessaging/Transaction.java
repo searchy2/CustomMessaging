@@ -73,11 +73,11 @@ public class Transaction {
     public String SMS_DELIVERED = ".SMS_DELIVERED";
 
     public static String NOTIFY_SMS_FAILURE = ".NOTIFY_SMS_FAILURE";
-    public static final String MMS_ERROR = "com.klinker.android.send_message.MMS_ERROR";
-    public static final String REFRESH = "com.klinker.android.send_message.REFRESH";
-    public static final String MMS_PROGRESS = "com.klinker.android.send_message.MMS_PROGRESS";
-    public static final String NOTIFY_OF_DELIVERY = "com.klinker.android.send_message.NOTIFY_DELIVERY";
-    public static final String NOTIFY_OF_MMS = "com.klinker.android.messaging.NEW_MMS_DOWNLOADED";
+    public static final String MMS_ERROR = "MMS_ERROR";
+    public static final String REFRESH = "REFRESH";
+    public static final String MMS_PROGRESS = "MMS_PROGRESS";
+    public static final String NOTIFY_OF_DELIVERY = "NOTIFY_DELIVERY";
+    public static final String NOTIFY_OF_MMS = "NEW_MMS_DOWNLOADED";
 
     public static final long NO_THREAD_ID = 0;
 

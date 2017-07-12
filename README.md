@@ -50,14 +50,14 @@ You'll also need to register a few receivers for when the messages have been sen
 
 ```xml
 <receiver
-    android:name="com.klinker.android.send_message.SentReceiver"
+    android:name="SentReceiver"
     android:taskAffinity="[insert package name here].SMS_SENT"/>
 
 <receiver
-    android:name="com.klinker.android.send_message.DeliveredReceiver"
+    android:name="DeliveredReceiver"
     android:taskAffinity="[insert package name here].SMS_DELIVERED"/>
 
-<!-- Your custom receiver which is child of com.klinker.android.send_message.MmsSentReceiver -->
+<!-- Your custom receiver which is child of MmsSentReceiver -->
 <receiver
     android:name="[insert your custom receiver here. eg. com.example.sms_mms.receivers.MyMmsSentReceiver]"
     android:taskAffinity="com.klinker.android.messaging.MMS_SENT"/>
