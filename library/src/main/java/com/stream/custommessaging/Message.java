@@ -1,7 +1,6 @@
 package com.stream.custommessaging;
 
 import android.graphics.Bitmap;
-
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -564,13 +563,14 @@ public class Message {
         }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
-            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
             output = stream.toByteArray();
         } finally {
             try {
                 stream.close();
             } catch (IOException e) {}
         }
+
         return output;
     }
 

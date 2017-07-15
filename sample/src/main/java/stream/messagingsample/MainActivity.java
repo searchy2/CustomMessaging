@@ -77,6 +77,22 @@ public class MainActivity extends Activity {
         BroadcastUtils.sendExplicitBroadcast(this, new Intent(), "test action");
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Utils.isDefaultSmsApp(this)) {
+            setDefaultAppButton.setVisibility(View.GONE);
+        } else {
+            setDefaultAppButton.setVisibility(View.VISIBLE);
+            setDefaultAppButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setDefaultSmsApp();
+                }
+            });
+        }
+    }
+
     private void initSettings() {
         settings = Settings.get(this);
 
