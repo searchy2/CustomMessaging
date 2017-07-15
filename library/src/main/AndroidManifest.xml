@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="stream.custommessaging"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<manifest package="stream.custommessaging"
+          xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
-
-        <provider android:name="com.stream.custommessaging.MmsFileProvider"
-                  android:authorities="${applicationId}.MmsFileProvider"
-                  android:enabled="true"
-                  android:grantUriPermissions="true"
-                  android:exported="false" />
-
+        <provider
+            android:name="com.stream.custommessaging.MmsFileProvider"
+            android:authorities="${applicationId}.MmsFileProvider"
+            android:enabled="true"
+            android:grantUriPermissions="true"
+            android:exported="false"/>
     </application>
 </manifest>
