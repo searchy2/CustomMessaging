@@ -52,8 +52,9 @@ public class MainActivity extends Activity {
     private ImageView imageToSend;
     private Button sendButton;
     private RecyclerView log;
-
     private LogAdapter logAdapter;
+
+    private boolean imageSend = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,11 +158,11 @@ public class MainActivity extends Activity {
     }
 
     private void toggleSendImage() {
-        if (imageToSend.isEnabled()) {
-            imageToSend.setEnabled(false);
+        if (imageSend) {
+            imageSend = false;
             imageToSend.setAlpha(0.3f);
         } else {
-            imageToSend.setEnabled(true);
+            imageSend = true;
             imageToSend.setAlpha(1.0f);
         }
     }
@@ -180,7 +181,7 @@ public class MainActivity extends Activity {
 
                 Message message = new Message(messageField.getText().toString(), toField.getText().toString());
 
-                if (imageToSend.isEnabled()) {
+                if (imageSend) {
                     message.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.android));
                 }
 
@@ -188,5 +189,4 @@ public class MainActivity extends Activity {
             }
         }).start();
     }
-
 }
