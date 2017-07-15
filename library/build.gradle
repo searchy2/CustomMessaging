@@ -5,8 +5,8 @@ group='com.github.searchy2'
 version = '1.2'
 
 dependencies {
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.squareup.okhttp3:okhttp-urlconnection:3.0.0'
 }
 
 android {

@@ -20,21 +20,21 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.SSLCertificateSocketFactory;
 import android.os.Build;
 import android.os.SystemClock;
-
 import android.util.Log;
 
 import com.android.mms.service_alt.exception.MmsNetworkException;
-import com.squareup.okhttp.ConnectionPool;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
 
-public class MmsNetworkManager implements com.squareup.okhttp.internal.Network {
+import okhttp3.ConnectionPool;
+
+public class MmsNetworkManager {
     private static final String TAG = "MmsNetworkManager";
     // Timeout used to call ConnectivityManager.requestNetwork
     private static final int NETWORK_REQUEST_TIMEOUT_MILLIS = 60 * 1000;
@@ -245,18 +245,6 @@ public class MmsNetworkManager implements com.squareup.okhttp.internal.Network {
 
     private static final InetAddress[] EMPTY_ADDRESS_ARRAY = new InetAddress[0];
 
-    @Override
-    public InetAddress[] resolveInetAddresses(String host) throws UnknownHostException {
-        Network network = null;
-        synchronized (this) {
-            if (mNetwork == null) {
-                return EMPTY_ADDRESS_ARRAY;
-            }
-            network = mNetwork;
-        }
-        return network.getAllByName(host);
-    }
-
     private ConnectivityManager getConnectivityManager() {
         if (mConnectivityManager == null) {
             mConnectivityManager = (ConnectivityManager) mContext.getSystemService(
@@ -267,7 +255,7 @@ public class MmsNetworkManager implements com.squareup.okhttp.internal.Network {
 
     private ConnectionPool getOrCreateConnectionPoolLocked() {
         if (mConnectionPool == null) {
-            mConnectionPool = new ConnectionPool(httpMaxConnections, httpKeepAliveDurationMs);
+            mConnectionPool = new ConnectionPool(httpMaxConnections, httpKeepAliveDurationMs, TimeUnit.MILLISECONDS);
         }
         return mConnectionPool;
     }
