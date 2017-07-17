@@ -313,5 +313,4 @@ public class MmsNetworkManager {
         Log.d(TAG, "MmsNetworkManager: getApnName: " + apnName);
         return apnName;
     }
-
 }
