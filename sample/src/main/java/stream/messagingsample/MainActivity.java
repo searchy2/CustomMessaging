@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Telephony;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,10 +32,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import android.util.Log;
 import com.stream.custommessaging.ApnUtils;
 import com.stream.custommessaging.BroadcastUtils;
-import com.stream.custommessaging.Message;
 import com.stream.custommessaging.Transaction;
 import com.stream.custommessaging.Utils;
 
@@ -195,10 +194,15 @@ public class MainActivity extends Activity {
 
                 Transaction transaction = new Transaction(MainActivity.this, sendSettings);
 
-                Message message = new Message(messageField.getText().toString(), toField.getText().toString());
+                Message message = new Message();
+                message.addAddress(toField.getText().toString());
+                message.setText(messageField.getText().toString());
+//                String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+//                final String imageDirectory = sdcardPath + "/SecretChat/Images/";
 
                 if (imageSend) {
-                    message.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.android));
+                    message.addImage(BitmapFactory.decodeResource(getResources(), R.drawable.android), "image/jpeg", "Android.jpg");
+//                    message.addMedia(imageDirectory + "android.gif", "image/gif", "android.gif");
                 }
 
                 transaction.sendNewMessage(message, Transaction.NO_THREAD_ID);

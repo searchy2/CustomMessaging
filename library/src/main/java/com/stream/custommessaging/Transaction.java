@@ -382,10 +382,9 @@ public class Transaction {
     }
 
     private void sendMmsMessage(Message message) {
+        Log.d("Send MMS", "Message");
         String text = message.getText();
         String[] addresses = message.getAddresses();
-        Bitmap[] image = message.getImages();
-        String[] imageNames = message.getImageNames();
         List<Message.Part> parts = message.getParts();
         String subject = message.getSubject();
         // merge the string[] of addresses into a single string so they can be inserted into the database easier
@@ -400,17 +399,6 @@ public class Transaction {
         // create the parts to send
         ArrayList<MMSPart> data = new ArrayList<MMSPart>();
 
-        for (int i = 0; i < image.length; i++) {
-            // turn bitmap into byte array to be stored
-            byte[] imageBytes = Message.bitmapToByteArray(image[i]);
-
-            MMSPart part = new MMSPart();
-            part.MimeType = "image/jpeg";
-            part.Name = (imageNames != null) ? imageNames[i] : ("IMAGE_" + System.currentTimeMillis());
-            part.Data = imageBytes;
-            data.add(part);
-        }
-
         // add any extra media according to their mimeType set in the message
         //      eg. videos, audio, contact cards, location maybe?
         if (parts != null) {
@@ -418,6 +406,7 @@ public class Transaction {
                 MMSPart part = new MMSPart();
                 if (p.getName() != null) {
                     part.Name = p.getName();
+                    Log.d("Part Name", p.getName());
                 } else {
                     part.Name = p.getContentType().split("/")[0];
                 }
@@ -937,8 +926,7 @@ public class Transaction {
      * @return true if the message will be mms, otherwise false
      */
     public boolean checkMMS(Message message) {
-        return message.getImages().length != 0 ||
-                (message.getParts().size() != 0) ||
+        return (message.getParts().size() != 0) ||
                 (settings.getSendLongAsMms() && Utils.getNumPages(settings, message.getText()) > settings.getSendLongAsMmsAfter()) ||
                 (message.getAddresses().length > 1 && settings.getGroup()) ||
                 message.getSubject() != null;

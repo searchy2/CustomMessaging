@@ -17,13 +17,12 @@ public class Message extends com.stream.custommessaging.Message{
     private String subject;
     private String[] addresses;
     private LinkedHashMap<String, ArrayList<String>> datapaths;
-    private Bitmap[] images;
-    private String[] imagePaths;
-    private String[] imageNames;
     private List<Part> parts = new ArrayList<Part>();
     private Integer groupid;
     private boolean save;
     private int delay;
+
+    public Message() {}
 
     public Message(String text, String address) {
         this(text, address.trim().split(" "));
@@ -32,7 +31,6 @@ public class Message extends com.stream.custommessaging.Message{
     public Message(String text, String[] addresses) {
         this.text = text;
         this.addresses = addresses;
-        this.images = new Bitmap[0];
         this.subject = null;
         this.save = true;
         this.groupid = -1;
@@ -42,7 +40,6 @@ public class Message extends com.stream.custommessaging.Message{
     public Message(String text, String[] addresses, String subject) {
         this.text = text;
         this.addresses = addresses;
-        this.images = new Bitmap[0];
         this.subject = subject;
         this.save = true;
         this.delay = 0;
@@ -75,17 +72,8 @@ public class Message extends com.stream.custommessaging.Message{
         return this.datapaths;
     }
 
-    public void setImages(Bitmap[] images) {
-        this.images = images;
-    }
-    
-    public void setImageNames(String[] names) {
-        this.imageNames = names;
-    }
-
-    public void setImage(Bitmap image) {
-        this.images = new Bitmap[1];
-        this.images[0] = image;
+    public void addImage(Bitmap bitmap, String mimeType, String imageName) {
+        this.parts.add(new Part(bitmapToByteArray(bitmap), mimeType, imageName));
     }
     
     public void addMedia(String filePath, String mimeType, String fileName) {
@@ -123,54 +111,11 @@ public class Message extends com.stream.custommessaging.Message{
 
         this.addresses[temp.length] = address;
     }
-
-    public void addImage(Bitmap image) {
-        Bitmap[] temp = this.images;
-
-        if (temp == null) {
-            temp = new Bitmap[0];
-        }
-
-        this.images = new Bitmap[temp.length + 1];
-
-        for (int i = 0; i < temp.length; i++) {
-            this.images[i] = temp[i];
-        }
-
-        this.images[temp.length] = image;
-    }
-
-    public void addImageName(String imageName) {
-        String[] temp = this.imageNames;
-
-        if (temp == null) {
-            temp = new String[0];
-            this.imageNames = new String[1];
-        }
-        else
-        {
-            this.imageNames = new String[temp.length + 1];
-        }
-
-        for (int i = 0; i < temp.length; i++) {
-            this.imageNames[i] = temp[i];
-        }
-
-        this.imageNames[temp.length] = imageName;
-    }
     
     public Integer getID() { return this.id; }
 
     public void resetText() {
         this.text = "";
-    }
-    
-    public void resetImage() {
-        this.images = null;
-    }
-    
-    public void resetImageNames() {
-        this.imageNames = null;
     }
 
     public String getText() {
@@ -180,15 +125,7 @@ public class Message extends com.stream.custommessaging.Message{
     public String[] getAddresses() {
         return this.addresses;
     }
-    
-    public Bitmap[] getImages() {
-        return this.images;
-    }
-    
-    public String[] getImageNames() {
-        return this.imageNames;
-    }
-    
+
     public List<com.stream.custommessaging.Message.Part> getParts() {
         return this.parts;
     }
@@ -206,6 +143,25 @@ public class Message extends com.stream.custommessaging.Message{
     }
 
     public Integer getGroupID() { return this.groupid; }
+
+    public static byte[] bitmapToByteArray(Bitmap image) {
+        byte[] output = new byte[0];
+        if (image == null) {
+            Log.v("Message", "image is null, returning byte array of size 0");
+            return output;
+        }
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            output = stream.toByteArray();
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {}
+        }
+
+        return output;
+    }
     
     public static byte[] fileToByteArray(String audioPath) {
         byte[] output = new byte[0];

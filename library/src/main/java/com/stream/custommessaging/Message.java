@@ -36,9 +36,6 @@ public class Message {
     private String text;
     private String subject;
     private String[] addresses;
-    private Bitmap[] images;
-    private String[] imagePaths;
-    private String[] imageNames;
     private List<Part> parts = new ArrayList<Part>();
     private boolean save;
     private int delay;
@@ -53,7 +50,6 @@ public class Message {
     public Message(String text, String[] addresses) {
         this.text = text;
         this.addresses = addresses;
-        this.images = new Bitmap[0];
         this.subject = null;
         this.save = true;
         this.delay = 0;
@@ -67,14 +63,6 @@ public class Message {
 
     public String[] getAddresses() {
         return this.addresses;
-    }
-
-    public Bitmap[] getImages() {
-        return this.images;
-    }
-
-    public String[] getImageNames() {
-        return this.imageNames;
     }
 
     public List<Part> getParts() {
@@ -93,22 +81,4 @@ public class Message {
         return this.delay;
     }
 
-    public static byte[] bitmapToByteArray(Bitmap image) {
-        byte[] output = new byte[0];
-        if (image == null) {
-            Log.v("Message", "image is null, returning byte array of size 0");
-            return output;
-        }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            output = stream.toByteArray();
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {}
-        }
-
-        return output;
-    }
 }
