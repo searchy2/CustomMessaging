@@ -194,18 +194,18 @@ public class MainActivity extends Activity {
 
                 Transaction transaction = new Transaction(MainActivity.this, sendSettings);
 
-                Message message = new Message();
-                message.addAddress(toField.getText().toString());
+                MessageBuilder message = new MessageBuilder();
+                message.setAddress(toField.getText().toString());
                 message.setText(messageField.getText().toString());
-//                String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-//                final String imageDirectory = sdcardPath + "/SecretChat/Images/";
+                String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                final String imageDirectory = sdcardPath + "/SecretChat/Images/";
 
                 if (imageSend) {
                     message.addImage(BitmapFactory.decodeResource(getResources(), R.drawable.android), "image/jpeg", "Android.jpg");
 //                    message.addMedia(imageDirectory + "android.gif", "image/gif", "android.gif");
                 }
 
-                transaction.sendNewMessage(message, Transaction.NO_THREAD_ID);
+                transaction.sendNewMessage(message.GetMessage(), Transaction.NO_THREAD_ID);
             }
         }).start();
     }

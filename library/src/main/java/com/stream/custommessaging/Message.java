@@ -1,10 +1,5 @@
 package com.stream.custommessaging;
 
-import android.graphics.Bitmap;
-import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +27,14 @@ public class Message {
             return name;
         }
     }
-    private Integer id;
-    private String text;
-    private String subject;
-    private String[] addresses;
-    private List<Part> parts = new ArrayList<Part>();
-    private boolean save;
-    private int delay;
+
+    public Integer id;
+    public String text;
+    public String subject;
+    public String[] addresses;
+    public List<Part> parts = new ArrayList<Part>();
+    public boolean save = true;
+    public int delay = 0;
 
     public Message() {
     }
@@ -54,6 +50,20 @@ public class Message {
         this.save = true;
         this.delay = 0;
     }
+
+    public void setId(Integer id) { this.id = id;}
+
+    public void setText(String text) { this.text = text; }
+
+    public void setSubject(String subject) { this.subject = subject; }
+
+    public void setAddresses(String[] addresses) { this.addresses = addresses; }
+
+    public void setParts(List<Part> parts) { this.parts = parts; }
+
+    public void setSave(boolean save) { this.save = save; }
+
+    public void setDelay(int delay) { this.delay = delay; }
 
     public Integer getID() { return this.id; }
 
